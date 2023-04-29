@@ -1,0 +1,11 @@
+laravel-web/.phpunit.cache
+laravel-web/node_modules
+laravel-web/public/build
+laravel-web/public/hot
+laravel-web/public/storage
+laravel-web/storage/*.key
+laravel-web/vendor
+laravel-web/.env
+laravel-web/.env.backup
+laravel-web/.env.production
+laravel-web/.phpunit.result.cache
