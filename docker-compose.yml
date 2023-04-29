@@ -1,31 +1,48 @@
-version: "3"
+version: '2.0'
 services:
-  web:
-    image: alpine
-    command: ping 127.0.0.1
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cloudsigma.com/php
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www/html/
     networks:
-      - frontend
-  middle:
-    image: alpine
-    command: ping 127.0.0.1
+      - app-network
+
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
     networks:
-      - frontend
-      - backend
+      - app-network
+
   db:
-    image: alpine
-    command: ping 127.0.0.1
+    image: mysql:5.7.32
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+       - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel_web
+      MYSQL_ROOT_PASSWORD: replace_mysql_root_password
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
     networks:
-      - backend
+     - app-network
+
+#Docker Networks
 networks:
-  frontend:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.10.0/24
-  backend:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.20.0/24
+  app-network:
+   driver: bridge
